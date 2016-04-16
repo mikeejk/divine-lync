@@ -108,7 +108,7 @@ function check_username_ajax(emailid){
             <div class="row">
                 <div class="wrapper">
 					<form class="form-signin" method="post" action="login.php">
-					  <h2 class="form-signin-heading">Login</h2>
+					  <h2 class="form-signin-heading">Login in to divine </h2>
 					  <input  id="emailid" type="text" class="form-control" name="user[emailid]" placeholder="Email" required="true" />
 					  <span id="user-email"></span>
 					  <br/>
@@ -116,37 +116,55 @@ function check_username_ajax(emailid){
 					  <br/>
 					  <button class="btn btn-lg btn-primary btn-block" type="submit" name="btnLogin" value="Login">Login</button>
 					</form>
+					 <div class="pull-right" style="padding-right: 320px;padding-bottom:120px"><a href="resetpassword.php">Forgotten Your Password</a></div>
 				</div>
             </div>
+           
         </div>
         <script src="../utils/jquery-1.11.2.min.js" type="text/javascript"></script>
         <script src="../utils/bootstrap-3.3.4-dist/js/bootstrap.min.js" type="text/javascript"></script>
         <script src="scripts/global-script.js" type="text/javascript"></script>
     </body>
 </html>
-<?php if(isset($_POST['btnLogin'])){
-	
-	
-	
+<?php if(isset($_POST['btnLogin']))
+{
 			$tablename="user";
-			
 			$usermailid=$_POST['user']['emailid'];
 			$userpassword=md5($_POST['user']['userpassword']);
-			$InsColumnVal = array("user_email"=>$usermailid,"user_password"=>$userpassword,"status"=>1);
-			$fetch=$obj->fetch($tablename, $InsColumnVal);
-			if(count($fetch)>1)
+			$userMailid = array("user_email"=>$usermailid);
+			$fetch=$obj->fetch($tablename, $userMailid);
+			if(count($fetch)>0)
 			{
 				
+				switch ($fetch['0']['status']) 
+				{
+					case 0:
+						echo "Dear User Kindly activate to login to our application";
+						break;
+				
+					case 1:
+						$InsColumnVal = array("user_email"=>$usermailid,"user_password"=>$userpassword,"status"=>1);
+						$fetchemail=$obj->fetch($tablename, $InsColumnVal);
+						
+						if(count($fetchemail)>0)
+						{
+						    header("location:dashboard.php");
+						}
+						else if(count($fetchemail)=="0")
+						{
+							die('<img src="../img/not-available.png" />'.'The password that you entered did not match our records. Please double-check and try again.');
+						}
+					default:
+						;
+						break;
+				}
 			}
 			else if(count($fetch)=="0")
 			{
-				if (!filter_var($_POST['user']['emailid'], FILTER_VALIDATE_EMAIL)) {
-					die('<img src="../img/not-available.png" />'.'Please enter valid emailid');
-				}
-				else {
-					
-					die('<img src="../img/not-available.png" />'.'The username and password you entered did not match our records. Please double-check and try again.');
-				}
+				die('<img src="../img/not-available.png" />'.'Sorry We have found that you have not rgistered with us.');
 			}
+			
+			
+			
 			
 }?>

@@ -128,6 +128,7 @@ function check_username_ajax(emailid){
 	
 	$toemailid=$_POST['user']['emailid'];
 	require("../phpmailer/class.phpmailer.php");
+	require("../phpmailer/class.smtp.php");
 	$mail = new PHPMailer();
 	
 	// ---------- adjust these lines ---------------------------------------
